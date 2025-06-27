@@ -1,0 +1,24 @@
+# Dockerfile para desarrollo con hot reload
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS development
+
+WORKDIR /app
+
+# Copiar archivos de proyecto
+COPY *.csproj ./
+COPY *.sln ./
+
+# Restaurar dependencias
+RUN dotnet restore
+
+# Instalar dotnet-ef tool para migraciones
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Copiar el resto del código
+COPY . ./
+
+# Exponer el puerto
+EXPOSE 5000
+
+# Comando para ejecutar la aplicación con hot reload
+CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5000"]
